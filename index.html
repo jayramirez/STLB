@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>supperLucky Demo 0.2.1</title>
+	<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+	<meta content="utf-8" http-equiv="encoding">	
+
+	<link rel="stylesheet/less" type="text/css" href="css/style.less">
+	<link rel="stylesheet" type="text/css" href="css/lytebox.css">
+	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+
+
+	<script src="js/jquery1.11.2.js"></script>	
+	<script src="js/fastclick.js"></script>
+	<script src="js/lytebox.2.3.js"></script>
+	<script src="js/less.js"></script>
+	<script src="js/config.js"></script>
+	<script src="js/app.js"></script>
+</head>
+<body>
+
+	<div class="wrapper">
+	
+		<section class="page" id="page-login">
+			<div class="login">
+				<ul>
+					<li>
+						<input type="text" id="user" placeholder="username">
+					</li>
+					<li>
+						<input type="password" id="pass" placeholder="password">
+					</li>
+					<li>
+						<button type="button" id="login" class="button">LOGIN</button>
+					</li>
+				</ul>
+			</div>			
+		</section>
+
+
+		<section class="page" id="page-cotejo">
+
+			<div class="user"><span id="logged"></span>  | <span id="logout">Logout</span> </div>
+
+			<div class="cotejo-list">
+				<div class="total">
+					<span>COTEJOS:</span>
+					<span>AMOUNT</span>
+				</div>
+				<ul>
+					<li>
+						<span>AB311546345</span>
+						<span>2,300</span>
+					</li>
+					<li>
+						<span>AB311546346</span>
+						<span>25,300</span>
+					</li>
+					<li>
+						<span>AB311546347</span>
+						<span>300</span>
+					</li>
+					<li>
+						<span>AB311546345</span>
+						<span>2,300</span>
+					</li>
+					<li>
+						<span>AB311546346</span>
+						<span>25,300</span>
+					</li>
+					<li>
+						<span>AB311546347</span>
+						<span>300</span>
+					</li>
+
+
+				</ul>
+				<div class="total">
+					<span>TOTAL:</span>
+					<span>184,724</span>
+				</div>
+			</div>
+			<div class="cotejo-new">
+				<div class="holder">
+
+					<button type="button" class="button" id="clear-ctrlno"><span class="glyphicon glyphicon-remove"></span></button>
+					<span id="ctrlno-holder"></span>
+					<button type="button" class="button disabled" id="submit-ctrlno">Submit</button>
+
+					<div class="clearfix"></div>
+
+					<div id="numeric-keys"></div>	
+					<div id="alpha-keys"></div>
+				</div>
+
+
+			</div>
+		
+
+		</section>
+
+
+		<section class="page" id="page-betting">
+
+			<div class="cotejo-holder">
+				<div class="content">
+					<div class="timer">
+						<span class="_timer">1</span>
+					</div>
+
+					<div class="cotejo-summary">
+						<span class="cotejo-id">LK3124124</span>
+						<span class="cotejo-total">0</span>
+					</div>
+					<ul class="combination-list">
+						<!-- dynamically added childnodes -->
+						<li><span>dasd</span><span>dasd</span></li>
+					</ul>
+
+					<div class="button" id="close-cotejo">CLOSE</div>
+				</div>
+			</div>
+			
+			<div class="keypad-holder">
+				<section>
+					<div class="header">
+						<h1>COMBINATIONS:</h1>
+						<div class="digits" id="keys-view"></div>
+						<span class="clear" id="keys-clear">Clear</span>
+					</div>
+					<div class="keypad" id="keys-holder"></div>
+				</section>
+
+				<section>
+					<div class="header">
+						<h1>AMOUNT:</h1>
+						<div class="digits" id="bet-view"></div>
+						<span class="clear" id="bet-clear">Clear</span>
+					</div>
+					<div class="keypad" id="bet-holder"></div>
+				</section>
+
+				<section>
+					<button class="button disabled" id="place-bet">PLACE BET</button>
+				</section>
+			</div>
+
+		</section>
+	</div>
+
+</body>
+</html>

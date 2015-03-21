@@ -1,0 +1,92 @@
+html, body{
+}
+
+.lytebox{
+     display: none;
+     position: fixed;
+     top:0;
+     left: 0;
+     width: 100%; 
+     background-color: rgba(0,0,0,0.9);
+     z-index: 9;
+     font: 12px Arial
+}
+     
+      .lytebox .lytebox-content-holder{
+          position: fixed;
+          top: 0;
+          width: 100%;
+          height: 100%;
+          overflow: auto;
+     }
+          .lytebox .lytebox-content{
+               position: relative;
+               display: block;
+               background-color: #fff;
+               min-height: 100px;
+               box-shadow: 0 5px 5px rgba(0,0,0,0.3)
+          }
+               .lytebox .lytebox-content.left{text-align: left;}
+               .lytebox .lytebox-content.right{text-align: right;}
+               .lytebox .lytebox-content.center{text-align: center;}
+
+               .lytebox  h1.lytebox-title{
+                    margin: 0;
+                    padding: 10px 15px 0px;
+                    font: 20px Arial;
+
+               }
+
+               .lytebox .lytebox-message{
+                    padding:30px;
+               }
+
+               .lytebox .lytebox-buttons{
+                    padding: 5px 30px 30px;
+               }
+                    .lytebox button{
+                         border: 1px solid #999;
+                         margin: 0px 2px;
+                         padding: 5px 10px;
+                         background-color: #f1f1f1;
+                    }
+
+               .lytebox .lytebox-buttons.left{text-align: left;}
+               .lytebox .lytebox-buttons.right{text-align: right;}
+               .lytebox .lytebox-buttons.center{text-align: center;}
+
+               .lytebox .lytebox-dialog-close{
+                    position: absolute;
+                    right: 0px;
+                    top: 0px;
+                    width: 30px;
+                    height: 30px;
+                    text-align: center;
+                    color: #fff;
+                    background-color: #fff;
+                    cursor: pointer;
+                    font: 18px arial;
+                    line-height: 30px;
+                    background-color: #aaa;
+
+               }
+
+/*inline popup*/
+.lytebox-wrap{
+     display: none;
+}
+
+.lytebox-wrap  .lytebox-wrapped-content{
+     display: none;
+}
+
+
+@media (max-width: 480px){
+     .lytebox .lytebox-content{
+          position: relative;
+          display: block;
+          border: 2px solid #777;
+          width: 90% !important;
+          background-color: #fff;
+     }   
+}
