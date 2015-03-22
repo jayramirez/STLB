@@ -103,11 +103,18 @@ function SuperLucky(){
 				align : 'center'
 			})
 
-			self.paginate('cotejo');
-
 			$.post(apiURL+'api.php',function(result){
-				console.log(result)
+				
+				if(result==0){
+					popup.dialog({
+						title : 'MENSAHE',
+						message : 'Sarado ang tayaan, Subukan ulit mamaya.',
+						type: 'alert'
+					})
+					return;
+				}
 				self.timerInit( result );
+				self.paginate('cotejo');
 			})
 
 		})
@@ -285,6 +292,7 @@ function SuperLucky(){
 			}
 
 			popup.dialog({
+				title: 'MENSAHE',
 				message : holder,
 				type : 'confirm',
 				okCaption: 'OK',
@@ -327,6 +335,7 @@ function SuperLucky(){
 			content+= '<div><span>Halaga:</span><span>'+self.humanizeNumber(self.cotejos.total)+'</span></div>';
 			content+= '</div>';
 		popup.dialog({
+			title: 'MENSAHE',
 			message : content,
 			type : 'alert',
 			onConfirm : self.completed
