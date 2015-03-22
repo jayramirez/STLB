@@ -9,7 +9,7 @@ html, body{
      width: 100%; 
      background-color: rgba(0,0,0,0.9);
      z-index: 9;
-     font: 12px Arial
+     font: 28px Arial;
 }
      
       .lytebox .lytebox-content-holder{
@@ -32,8 +32,10 @@ html, body{
 
                .lytebox  h1.lytebox-title{
                     margin: 0;
-                    padding: 10px 15px 0px;
-                    font: 20px Arial;
+                    padding: 20px;
+                    color: #fff;
+                    font: 32px Arial;
+                    background: #37474F;
 
                }
 

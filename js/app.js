@@ -16,12 +16,17 @@ var popup = new Lytebox({
 function SuperLucky(){
 
 	var self =this,
-		betLimit = 2,
 		timerQueue,
 		el;
+
+	self.betLimit = 2;
+	self.agencyID;
+	self.cotejos = {list : [], total : 0};
+	self.currentCotejo = {id: '', total : 0 };
 	self.ctrlno = [];
 	self.keys;
 	self.bet;
+	self.transactionID;
 
 	
 
@@ -43,8 +48,7 @@ function SuperLucky(){
 			timer : $('._timer'),
 
 			//login
-			inputUser : $('#user'),
-			inputPass : $('#pass'),
+			inputAgency : $('#agency'),
 			buttonLogin : $('#login'),
 
 			//logged
@@ -59,7 +63,16 @@ function SuperLucky(){
 
 			//combinations list
 			betList : $('.combination-list'),
-			buttonCloseCotejo : $('#close-cotejo')
+			buttonCloseCotejo : $('#close-cotejo'),
+			cotejoID : $('.cotejo-id'),
+			cotejoTotal : $('.cotejo-total'),
+
+			//cotejo list
+
+			cotejoList : $('.cotejo-list ul'),
+			grandTotal : $('#grand-total'),
+
+			buttonCloseTransaction : $('#close-transaction')
 		}
 
 		self.login();
@@ -68,34 +81,33 @@ function SuperLucky(){
 		self.generateKeysButtons();
 		self.generateBetButtons();
 
+
 	}
 
 	this.login = function(){
 
 		el.pageLogin.addClass('active');
 		el.buttonLogin.click(function(){
+			var agencyID = el.inputAgency.val();
 
-			$.post('services/api.php',{
-				user : el.inputUser.val(),
-				pass : el.inputPass.val()
-			},function(result){
-				var data = eval('('+result+')');
+			if(agencyID.length<3){
+				return
+			}
+			self.agencyID = agencyID;
+			self.transactionID = Math.floor(Date.now() / 1000);
+			el.loguser.text( self.transactionID );
 
-				if(data.status==1){
+			popup.dialog({
+				message: ' <h1 style="font-size:50px; color:#333">Your transaction ID is: <br><big>'+self.transactionID+'</big></h1>',
+				type: 'alert',
+				align : 'center'
+			})
 
-					self.timerInit( data.system.timeout );
-					el.loguser.text( data.user.name )
+			self.paginate('cotejo');
 
-					self.paginate('cotejo');
-
-				}else{
-					el.inputPass.val('');
-					popup.dialog({
-						width : 600,
-						title : 'Error',
-						message : 'Invalid login details'
-					})
-				}
+			$.post(apiURL+'api.php',function(result){
+				console.log(result)
+				self.timerInit( result );
 			})
 
 		})
@@ -157,7 +169,11 @@ function SuperLucky(){
 		var page;
 
 		switch(section){
-
+			case 'login' : 
+				page = el.pageLogin;
+				page.addClass('active');
+				el.inputAgency.val('');
+			break;
 			case 'cotejo':
 				page = el.pageCotejo;
 				el.ctrlNumberConfirm.addClass('disabled');	
@@ -167,20 +183,12 @@ function SuperLucky(){
 				
 			break;
 			case 'betting':
-
-				console.log(section);
-				// if(self.ctrlno.length<9){
-				// 	self.paginate('cotejo');
-				// 	return;
-				// }
-
 				self.keys = [];
 				self.bet = [];
 				self.resetBet();
 				el.viewKeys.html('');
 				el.viewBet.html('');
-				el.submit.addClass('disabled')
-
+				el.submit.addClass('disabled');
 				page = el.pageBetting;
 				CTRLNO = self.ctrlno.join('');
 				page.addClass('active');
@@ -194,6 +202,13 @@ function SuperLucky(){
 			if(self.ctrlno.length<9){
 				return;
 			}
+			self.currentCotejo.id = el.viewCtrlno.html();
+			el.cotejoID.html(self.currentCotejo.id);
+
+			self.currentCotejo.total = 0;
+			el.betList.html('');
+			el.cotejoTotal.html('0');
+
 			self.paginate('betting');
 		})
 
@@ -209,22 +224,41 @@ function SuperLucky(){
 				self.keys.pop();
 				self.updateViewKeys();
 				self.resetBet();
-				self.toggleKeypads();
+				self.toggleSubmitBet();
 			})
 
 		el.clearBet.unbind('click')
 			.bind('click',function(){
 				self.bet.pop();
 				self.updateViewBet();
-				self.toggleKeypads();
+				self.toggleSubmitBet();
 			})
 
 		el.buttonCloseCotejo.click(function(){
-			self.paginate('cotejo');	
+			popup.dialog({
+				title : 'KUMPIRMAHIN',
+				message : 'Tapusin na ang transaksyong ito?',
+				width : 700,
+				type : 'confirm',
+				onConfirm : function(){
+
+					if(self.currentCotejo.total==0){
+						self.paginate('cotejo');
+						return;
+					}			
+					self.cotejos.list[self.currentCotejo.id] = self.currentCotejo.total;
+					self.cotejos.total += self.currentCotejo.total;
+					el.grandTotal.html( self.humanizeNumber(self.cotejos.total) );
+					el.cotejoList.prepend('<li><span>'+self.currentCotejo.id+'</span><span>'+self.humanizeNumber(self.currentCotejo.total)+'</span></li>');
+					self.paginate('cotejo');	
+				}
+			})
 		})
 
 		el.submit.bind('click',function(){
-
+			if(self.bet.length < self.betLimit || self.keys.length < 2){
+				return;
+			}
 			var holder = $('<div></div>');
 				holder.addClass('confirm-combination');
 			
@@ -232,7 +266,7 @@ function SuperLucky(){
 			var keys = $('<div></div>');
 				keys.addClass('keys')
 					.appendTo(holder)
-					.append('<em>COMBINATIONS</em>');
+					.append('<em>KOMBINASYON</em>');
 
 			for(i=0; i<self.keys.length; i++){
 				var span = $('<span></span>');
@@ -243,7 +277,7 @@ function SuperLucky(){
 			var keys = $('<div></div>');
 				keys.addClass('bet')
 					.appendTo(holder)
-					.append('<em>BET</em>');
+					.append('<em>TAYA</em>');
 
 			for(i=0; i<self.bet.length; i++){
 				var span = $('<span></span>');
@@ -253,23 +287,81 @@ function SuperLucky(){
 			popup.dialog({
 				message : holder,
 				type : 'confirm',
-				okCaption: 'CONFIRM',
+				okCaption: 'OK',
 				cancelCaption: 'CANCEL',
 				onConfirm : function(){
-					// popup.dialog('sending');
-					// $.post('services/api.php',function(result){
+								
+					var combinations = self.keys.join(',');
+					var bet = self.bet.join(',');
 
-					//	popup.dialog('success');
-						self.updateCotejos();
-						self.paginate('betting')
-					//})
+					$.post(apiURL+'/api.php',{
+						combinations : combinations,
+						amount : bet,
+						ctrlno : self.currentCotejo.id,
+						agency_id : self.agencyID,
+						user_id : self.transactionID
+
+					});
+
+					self.updateCotejos();
+					self.paginate('betting');
 				}
+			})
+		})
+
+		el.buttonCloseTransaction.click(function(){
+			popup.dialog({
+				title : 'KUMPIRMAHIN',
+				message : 'Tapusin na ang transaksyong ito?',
+				width : 700,
+				type : 'confirm',
+				onConfirm : self.finish
 			})
 		})
 	}
 
+	self.finish = function(){
+		var content = 'Ibigay sa kahera ang ID ng transaksyon at ang halagang nakasulat sa ibaba:<br>';
+			content+= '<div class="completion">';
+			content+= '<div><span>Transaction ID:</span><span>'+self.transactionID+'</span></div>';
+			content+= '<div><span>Halaga:</span><span>'+self.humanizeNumber(self.cotejos.total)+'</span></div>';
+			content+= '</div>';
+		popup.dialog({
+			message : content,
+			type : 'alert',
+			onConfirm : self.completed
+		})
+	}
+
+	self.completed = function(){
+
+		self.paginate('login');
+
+
+	}
+
 	this.updateCotejos = function(){
-		el.betList.append('<li><span>'+self.keys.join('-')+'</span><span>'+self.bet.join('-')+'</span></li>');
+		var bet = 0;
+		var total = self.currentCotejo.total;
+		var betBalls = '';
+		var keyBalls = '';
+
+		for(i=0; i<self.bet.length; i++){
+			bet =self.bet[i]*1 + bet;
+			betBalls += '<i>'+self.bet[i]+'</i>';
+		}
+
+		for(i=0; i<self.keys.length; i++){
+			keyBalls += '<i>'+self.keys[i]+'</i>';
+		}
+
+
+		total = total*1 + bet;
+		self.currentCotejo.total = total;
+		el.cotejoTotal.html( self.humanizeNumber(total) );
+
+		el.betList.prepend('<li><span>'+keyBalls+'</span><span>'+betBalls+'</span></li>');
+	
 	}
 
 	this.generateKeysButtons = function(){
@@ -286,7 +378,7 @@ function SuperLucky(){
 			btn.unbind('click')
 				.bind('click',function(){
 					var el = $(this);
-					var val = el.text();
+					var val = el.text()*1;
 
 					if(self.keys.length>=5){
 						return false;
@@ -329,7 +421,7 @@ function SuperLucky(){
 			keysBall.appendTo(el.viewKeys);
 
 		})
-		self.toggleKeypads();
+		self.toggleSubmitBet();
 	}
 
 	this.generateBetButtons = function(){
@@ -347,7 +439,7 @@ function SuperLucky(){
 			btn.unbind('click')
 				.bind('click',function(){
 					var el = $(this);
-					var val = el.text();
+					var val = el.text()*1;
 
 
 					if(self.bet.length>=self.betLimit || self.keys.length<2){
@@ -368,20 +460,29 @@ function SuperLucky(){
 		$.each(self.bet,function(key, val){
 			var betBall = $('<span>'+val+'</span>');
 			betBall.appendTo(el.viewBet);
-			self.toggleKeypads();
+			self.toggleSubmitBet();
 		})
 
 	}
 
-	this.toggleKeypads = function(){
+	this.toggleSubmitBet = function(){
 		var disabled = 'disabled';
-
 
 		if(self.bet.length==self.betLimit && self.keys.length >=2){
 			el.submit.removeClass(disabled);
 		}else{
 			el.submit.addClass(disabled);
 		}
+	}
+
+	this.humanizeNumber = function(n) {
+	  n = n.toString()
+	  while (true) {
+	    var n2 = n.replace(/(\d)(\d{3})($|,|\.)/g, '$1,$2$3')
+	    if (n == n2) break
+	    n = n2
+	  }
+	  return n
 	}
 
 	this.timerInit = function(sec){
@@ -399,13 +500,16 @@ function SuperLucky(){
 	        diff = duration - (((Date.now() - start) / 1000) | 0);
 
 	        // does the same job as parseInt truncates the float
-	        minutes = (diff / 60) | 0;
-	        seconds = (diff % 60) | 0;
+		        
+	        hours = parseInt(timer/3600, 10)
+	        minutes = parseInt(timer % 3600 / 60, 10)
+	        seconds = parseInt(timer % 60, 10);
 
+	        hours = hours < 10 ? "0" + hours : hours;
 	        minutes = minutes < 10 ? "0" + minutes : minutes;
 	        seconds = seconds < 10 ? "0" + seconds : seconds;
 
-	        el.timer.html(minutes + ":" + seconds); 
+	        el.timer.html(hours +":"+ minutes + ":" + seconds); 
 
 	        if (diff <= 0) {
 	            // add one second so that the count down starts at the full duration
