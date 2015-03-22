@@ -246,7 +246,7 @@ function SuperLucky(){
 		el.buttonCloseCotejo.click(function(){
 			popup.dialog({
 				title : 'KUMPIRMAHIN',
-				message : 'Tapusin na ang transaksyong ito?',
+				message : 'Isarana ang cotejong ito?',
 				width : 700,
 				type : 'confirm',
 				onConfirm : function(){
@@ -311,10 +311,21 @@ function SuperLucky(){
 						agency_id : self.agencyID,
 						user_id : self.transactionID
 
+					},function(result){
+						result = result*1;
+
+						if(result==1){
+							self.updateCotejos();
+							self.paginate('betting');
+						}else{
+							popup.dialog({
+								title: 'MENSAHE',
+								message : 'Hindi kayo umabot, sarado na po ang tayaan.',
+								type : 'alert'
+							})
+						}
 					});
 
-					self.updateCotejos();
-					self.paginate('betting');
 				}
 			})
 		})
@@ -523,8 +534,7 @@ function SuperLucky(){
 	        minutes = minutes < 10 ? "0" + minutes : minutes;
 	        seconds = seconds < 10 ? "0" + seconds : seconds;
 
-	        el.timer.html( hours +": "+ minutes + ":" + seconds); 
-	        console.log( hours +": "+ minutes + ":" + seconds); 
+	        el.timer.html( hours +": "+ minutes + ":" + seconds);
 
 	        if (diff <= 0) {
 	            // add one second so that the count down starts at the full duration
