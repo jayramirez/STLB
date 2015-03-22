@@ -93,15 +93,6 @@ function SuperLucky(){
 			if(agencyID.length<3){
 				return
 			}
-			self.agencyID = agencyID;
-			self.transactionID = Math.floor(Date.now() / 1000);
-			el.loguser.text( self.transactionID );
-
-			popup.dialog({
-				message: ' <h1 style="font-size:50px; color:#333">Your transaction ID is: <br><big>'+self.transactionID+'</big></h1>',
-				type: 'alert',
-				align : 'center'
-			})
 
 			$.post(apiURL+'api.php',function(result){
 				
@@ -115,6 +106,17 @@ function SuperLucky(){
 				}
 				self.timerInit( result );
 				self.paginate('cotejo');
+
+					
+				self.agencyID = agencyID;
+				self.transactionID = Math.floor(Date.now() / 1000);
+				el.loguser.text( self.transactionID );
+
+				popup.dialog({
+					message: ' <h1 style="font-size:50px; color:#333">Your transaction ID is: <br><big>'+self.transactionID+'</big></h1>',
+					type: 'alert',
+					align : 'center'
+				})
 			})
 
 		})
