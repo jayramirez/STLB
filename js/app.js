@@ -347,7 +347,10 @@ function SuperLucky(){
 	self.completed = function(){
 
 		self.paginate('login');
-
+		el.grandTotal.html('');
+		el.cotejoList.html('');
+		self.cotejos.list = [];
+		self.cotejos.total = 0;
 
 	}
 
