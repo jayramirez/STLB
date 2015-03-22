@@ -107,7 +107,7 @@ function SuperLucky(){
 				self.timerInit( result );
 				self.paginate('cotejo');
 
-					
+
 				self.agencyID = agencyID;
 				self.transactionID = Math.floor(Date.now() / 1000);
 				el.loguser.text( self.transactionID );
@@ -500,9 +500,10 @@ function SuperLucky(){
 	    startTimer(sec);
 	}
 
-	function startTimer(duration, display) {
+	function startTimer(duration) {
 	    var start = Date.now(),
 	        diff,
+	        hours,
 	        minutes,
 	        seconds;
 	    function timer() {
@@ -511,16 +512,16 @@ function SuperLucky(){
 	        diff = duration - (((Date.now() - start) / 1000) | 0);
 
 	        // does the same job as parseInt truncates the float
-		        
-	        hours = parseInt(timer/3600, 10)
-	        minutes = parseInt(timer % 3600 / 60, 10)
-	        seconds = parseInt(timer % 60, 10);
+	        hours = (diff / 3600) | 0;
+	        minutes = (diff % 3600 / 60) | 0;
+	        seconds = (diff % 60) | 0;
 
 	        hours = hours < 10 ? "0" + hours : hours;
 	        minutes = minutes < 10 ? "0" + minutes : minutes;
 	        seconds = seconds < 10 ? "0" + seconds : seconds;
 
-	        el.timer.html(hours +":"+ minutes + ":" + seconds); 
+	        el.timer.html( hours +": "+ minutes + ":" + seconds); 
+	        console.log( hours +": "+ minutes + ":" + seconds); 
 
 	        if (diff <= 0) {
 	            // add one second so that the count down starts at the full duration
@@ -528,6 +529,7 @@ function SuperLucky(){
 	            start = Date.now() + 1000;
 	        }
 	    };
+
 	    // we don't want to wait a full second before the timer starts
 	    timer();
 	    clearInterval(timerQueue);
